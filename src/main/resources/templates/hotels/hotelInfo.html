@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1" />
+<title>Hotel Information</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link
+	href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.1/css/bootstrap.min.css"
+	rel="stylesheet" media="screen" />
+<script th:src="@{|/js/jquery.js|}"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script th:src="@{|/js/pikaday.js|}"></script>
+<link rel="stylesheet" th:href="@{|/css/pikaday.css|}" />
+<link rel="stylesheet" type="text/css" th:href="@{|/css/general.css|}" />
+<script th:src="@{|/js/app.js|}"></script>
+<script th:src="@{|/js/sss.js|}"></script>
+<link rel="stylesheet" th:href="@{|/css/sss.css|}" type="text/css"
+	media="all" />
+<script type="text/javascript"
+	src="http://maps.googleapis.com/maps/api/js"></script>
+<script th:inline="javascript">
+    var map;
+    /*<![CDATA[*/
+	var lat = /*[[${hotel.latitude}]]*/;
+	var lng = /*[[${hotel.longitude}]]*/;
+	/*]]>*/
+    function InitializeMap() {
+        var latlng = new google.maps.LatLng(lat, lng);
+        var myOptions =
+        {
+            zoom: 8,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            disableDefaultUI: true
+        };
+        map = new google.maps.Map(document.getElementById("map"), myOptions);
+    }
+    window.onload = InitializeMap;
+</script>
+<script type="text/javascript">
+		var startDate, endDate, updateStartDate = function() {
+			startPicker.setStartRange(startDate);
+			endPicker.setStartRange(startDate);
+			endPicker.setMinDate(startDate);
+		}, updateEndDate = function() {
+			startPicker.setEndRange(endDate);
+			startPicker.setMaxDate(endDate);
+			endPicker.setEndRange(endDate);
+		}, startPicker = new Pikaday({
+			field : document.getElementById('start'),
+			minDate : new Date(),
+			maxDate : new Date(2020, 12, 31),
+			onSelect : function() {
+				startDate = this.getDate();
+				updateStartDate();
+			}
+		}), endPicker = new Pikaday({
+			field : document.getElementById('end'),
+			minDate : new Date(),
+			maxDate : new Date(2020, 12, 31),
+			onSelect : function() {
+				endDate = this.getDate();
+				updateEndDate();
+			}
+		}), _startDate = startPicker.getDate(), _endDate = endPicker.getDate();
+
+		if (_startDate) {
+			startDate = _startDate;
+			updateStartDate();
+		}
+
+		if (_endDate) {
+			endDate = _endDate;
+			updateEndDate();
+		}
+	</script>
+</head>
+<body>
+	<div th:include="fragments/header"></div>
+	<div class="container">
+		<div th:fragment="hotel-header" class="page-header">
+			<h1>
+				<span th:text="${hotel.name}"></span> - <span th:text="${hotel.id}"></span>
+				<br /> <small> <span th:text="${hotel.categories}"></span>
+					- <span th:text="${hotel.address}"></span>, <span
+					th:text="${hotel.city}"></span>, <span th:text="${hotel.province}"></span>,
+					<span th:text="${hotel.country}"></span> - <span
+					th:text="${hotel.postalcode}"></span>
+				</small>
+			</h1>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="tabbable-panel">
+					<div class="tabbable-line">
+						<ul class="nav nav-tabs nav-justified">
+							<li class="active"><a href="#tab_default_1"
+								data-toggle="tab">Photos</a></li>
+							<li><a onclick="displayMap()" href="#tab_default_2"
+								data-toggle="tab">Map</a></li>
+						</ul>
+						<br>
+						<div class="tab-content">
+							<div class="tab-pane active" id="tab_default_1">
+								<div class="slider"></div>
+								<div id="map" style="height: 300px; width: 500px"></div>
+							</div>
+							<div class="tab-pane" id="tab_default_2"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<p>
+					<span> <a class="btn btn-default" href="#"
+						data-toggle="modal" data-target="#myModalTypes">Room types
+							available</a>
+					</span> <br> <br>
+				</p>
+			</div>
+			<div class="col-md-6">
+				<h2>Reviews</h2>
+				<span><b>Rating</b> - <span th:text="${hotel.rating}"></span></span>
+				<br>
+				<br> <b><span th:text="${hotel.username}"></span></b> <br>
+				<br> <span th:text="${hotel.title}"></span> <br>
+				<br> <span th:text="${hotel.text}"></span>
+			</div>
+		</div>
+		<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">Select dates</h4>
+					</div>
+					<div class="modal-body">
+						<form method="post">
+							<p>
+								<input type="hidden" th:field="*{name}" />
+							<div style="display: inline-block">
+								<label for="start"><i
+									class='glyphicon glyphicon-calendar'></i> Check-in:</label> <input
+									type="text" class="form-control" id="start"
+									th:field="*{begin_date}"></input>
+							</div>
+							<p></p>
+							<div style="display: inline-block">
+								<label for="end"><i class='glyphicon glyphicon-calendar'></i>
+									Check-out:</label> <input type="text" class="form-control" id="end"
+									th:field="*{end_date}" />
+							</div>
+							<p></p>
+							<input class="btn btn-primary" type="submit"
+								value="See occupancy map" />
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="myModalTypes" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">Room types
+							available</h4>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div> -->
+	</div>
+</body>
+</html>

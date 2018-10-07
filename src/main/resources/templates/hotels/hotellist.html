@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1" />
+<title>Hotel List</title>
+</head>
+<body>
+	<h2>Hotel List</h2>
+	<table cellpadding="2" cellspacing="2">
+		<tr>
+			<th>Id</th>
+			<th>Address</th>
+			<th>Categories</th>
+			<th>City</th>
+			<th>Country</th>
+			<th>Latitude</th>
+			<th>Longitude</th>
+			<th>Name</th>
+			<th>Postal Code</th>
+			<th>Province</th>
+			<th>Reviews Rating</th>
+			<th>Review</th>
+			<th>Review Title</th>
+			<th>Review Username</th>
+		</tr>
+		<tr th:each="hotel, iterStat : ${hotellist}">
+			<td><span th:text="${hotel.id}"></span></td>
+			<td><span th:text="${hotel.address}"></span></td>
+			<td><span th:text="${hotel.categories}"></span></td>
+			<td><span th:text="${hotel.city}"></span></td>
+			<td><span th:text="${hotel.country}"></span></td>
+			<td><span th:text="${hotel.latitude}"></span></td>
+			<td><span th:text="${hotel.longitude}"></span></td>
+			<td><span th:text="${hotel.name}"></span></td>
+			<td><span th:text="${hotel.postalcode}"></span></td>
+			<td><span th:text="${hotel.province}"></span></td>
+			<td><span th:text="${hotel.rating}"></span></td>
+			<td><span th:text="${hotel.text}"></span></td>
+			<td><span th:text="${hotel.title}"></span></td>
+			<td><span th:text="${hotel.username}"></span></td>
+		</tr>
+	</table>
+</body>
+</html>
